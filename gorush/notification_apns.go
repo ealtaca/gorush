@@ -8,7 +8,6 @@ import (
 	"net/http"
 	"path/filepath"
 	"time"
-
 	"github.com/mitchellh/mapstructure"
 	"github.com/sideshow/apns2"
 	"github.com/sideshow/apns2/certificate"
@@ -27,22 +26,27 @@ type Sound struct {
 	Volume   float32 `json:"volume,omitempty"`
 }
 
-// InitAPNSClient use for initialize APNs Client.
 func InitAPNSClient() error {
+	return nil
+}
+
+// InitAPNSClient use for initialize APNs Client.
+func InitAPNSClientFromRequest(req PushNotification) error {
 	if PushConf.Ios.Enabled {
 		var err error
 		var authKey *ecdsa.PrivateKey
 		var certificateKey tls.Certificate
 		var ext string
 
-		if PushConf.Ios.KeyPath != "" {
-			ext = filepath.Ext(PushConf.Ios.KeyPath)
+		LogError.Error("Cert Error:", req)
+		if req.CertFilePath != "" {
+			ext = filepath.Ext(req.CertFilePath)
 
 			switch ext {
 			case ".p12":
-				certificateKey, err = certificate.FromP12File(PushConf.Ios.KeyPath, PushConf.Ios.Password)
+				certificateKey, err = certificate.FromP12File(req.CertFilePath, req.CertPassword)
 			case ".pem":
-				certificateKey, err = certificate.FromPemFile(PushConf.Ios.KeyPath, PushConf.Ios.Password)
+				certificateKey, err = certificate.FromPemFile(req.CertFilePath, req.CertPassword)
 			case ".p8":
 				authKey, err = token.AuthKeyFromFile(PushConf.Ios.KeyPath)
 			default:
@@ -54,45 +58,32 @@ func InitAPNSClient() error {
 
 				return err
 			}
-		} else if PushConf.Ios.KeyBase64 != "" {
-			ext = "." + PushConf.Ios.KeyType
-			key, err := base64.StdEncoding.DecodeString(PushConf.Ios.KeyBase64)
+
+			ApnsClient, err = newApnsClient(certificateKey)
+		} else if req.PEKeyEncoded != "" && req.PEKeyID != "" && req.TeamID != "" {
+
+			key, err := base64.StdEncoding.DecodeString(req.PEKeyEncoded)
+
 			if err != nil {
 				LogError.Error("base64 decode error:", err.Error())
 
 				return err
 			}
-			switch ext {
-			case ".p12":
-				certificateKey, err = certificate.FromP12Bytes(key, PushConf.Ios.Password)
-			case ".pem":
-				certificateKey, err = certificate.FromPemBytes(key, PushConf.Ios.Password)
-			case ".p8":
-				authKey, err = token.AuthKeyFromBytes(key)
-			default:
-				err = errors.New("wrong certificate key type")
-			}
+			
+			authKey, err = token.AuthKeyFromBytes(key)
 
-			if err != nil {
-				LogError.Error("Cert Error:", err.Error())
 
-				return err
-			}
-		}
-
-		if ext == ".p8" && PushConf.Ios.KeyID != "" && PushConf.Ios.TeamID != "" {
 			token := &token.Token{
 				AuthKey: authKey,
 				// KeyID from developer account (Certificates, Identifiers & Profiles -> Keys)
-				KeyID: PushConf.Ios.KeyID,
+				KeyID: req.PEKeyID,
 				// TeamID from developer account (View Account -> Membership)
-				TeamID: PushConf.Ios.TeamID,
+				TeamID: req.TeamID,
 			}
 
 			ApnsClient, err = newApnsTokenClient(token)
-		} else {
-			ApnsClient, err = newApnsClient(certificateKey)
 		}
+		
 
 		if err != nil {
 			LogError.Error("Transport Error:", err.Error())
@@ -338,10 +329,8 @@ func getApnsClient(req PushNotification) (client *apns2.Client) {
 func PushToIOS(req PushNotification) bool {
 
 	LogAccess.Debug("Init APNS client")
-	PushConf.Ios.KeyPath = req.CertFilePath
-	PushConf.Ios.Password = req.CertPassword
 
-	InitAPNSClient()
+	InitAPNSClientFromRequest(req)
 
 
 	LogAccess.Debug("Start push notification for iOS")

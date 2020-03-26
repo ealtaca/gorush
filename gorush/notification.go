@@ -81,23 +81,26 @@ type PushNotification struct {
 	Notification          *fcm.Notification `json:"notification,omitempty"`
 
 	// iOS
-	Expiration  *int64   `json:"expiration,omitempty"`
-	ApnsID      string   `json:"apns_id,omitempty"`
-	CollapseID  string   `json:"collapse_id,omitempty"`
-	Topic       string   `json:"topic,omitempty"`
-	PushType    string   `json:"push_type,omitempty"`
-	Badge       *int     `json:"badge,omitempty"`
-	Category    string   `json:"category,omitempty"`
-	ThreadID    string   `json:"thread-id,omitempty"`
-	URLArgs     []string `json:"url-args,omitempty"`
-	Alert       Alert    `json:"alert,omitempty"`
-	Production  bool     `json:"production,omitempty"`
-	Development bool     `json:"development,omitempty"`
-	SoundName   string   `json:"name,omitempty"`
-	SoundVolume float32  `json:"volume,omitempty"`
-	Apns        D        `json:"apns,omitempty"`
+	Expiration     *int64   `json:"expiration,omitempty"`
+	ApnsID         string   `json:"apns_id,omitempty"`
+	CollapseID     string   `json:"collapse_id,omitempty"`
+	Topic          string   `json:"topic,omitempty"`
+	PushType       string   `json:"push_type,omitempty"`
+	Badge          *int     `json:"badge,omitempty"`
+	Category       string   `json:"category,omitempty"`
+	ThreadID       string   `json:"thread-id,omitempty"`
+	URLArgs        []string `json:"url-args,omitempty"`
+	Alert          Alert    `json:"alert,omitempty"`
+	Production     bool     `json:"production,omitempty"`
+	Development    bool     `json:"development,omitempty"`
+	SoundName      string   `json:"name,omitempty"`
+	SoundVolume    float32  `json:"volume,omitempty"`
+	Apns           D        `json:"apns,omitempty"`
 	CertFilePath   string   `json:"cert_file_path,omitempty"`
 	CertPassword   string   `json:"cert_password,omitempty"`
+	PEKeyEncoded   string   `json:"p8_key_encoded,omitempty"`
+	PEKeyID        string   `json:"p8_key_id,omitempty"`
+	TeamID         string   `json:"team_id,omitempty"`
 }
 
 // WaitDone decrements the WaitGroup counter.
