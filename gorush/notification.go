@@ -5,7 +5,6 @@ import (
 	"errors"
 	"net/http"
 	"net/url"
-	"os"
 	"strings"
 	"sync"
 
@@ -97,6 +96,8 @@ type PushNotification struct {
 	SoundName   string   `json:"name,omitempty"`
 	SoundVolume float32  `json:"volume,omitempty"`
 	Apns        D        `json:"apns,omitempty"`
+	CertFilePath   string   `json:"cert_file_path,omitempty"`
+	CertPassword   string   `json:"cert_password,omitempty"`
 }
 
 // WaitDone decrements the WaitGroup counter.
@@ -182,18 +183,18 @@ func CheckPushConf() error {
 		return errors.New("Please enable iOS or Android config in yml config")
 	}
 
-	if PushConf.Ios.Enabled {
-		if PushConf.Ios.KeyPath == "" && PushConf.Ios.KeyBase64 == "" {
-			return errors.New("Missing iOS certificate key")
-		}
+	// if PushConf.Ios.Enabled {
+	// 	if PushConf.Ios.KeyPath == "" && PushConf.Ios.KeyBase64 == "" {
+	// 		return errors.New("Missing iOS certificate key")
+	// 	}
 
-		// check certificate file exist
-		if PushConf.Ios.KeyPath != "" {
-			if _, err := os.Stat(PushConf.Ios.KeyPath); os.IsNotExist(err) {
-				return errors.New("certificate file does not exist")
-			}
-		}
-	}
+	// 	// check certificate file exist
+	// 	if PushConf.Ios.KeyPath != "" {
+	// 		if _, err := os.Stat(PushConf.Ios.KeyPath); os.IsNotExist(err) {
+	// 			return errors.New("certificate file does not exist")
+	// 		}
+	// 	}
+	// }
 
 	if PushConf.Android.Enabled {
 		if PushConf.Android.APIKey == "" {
