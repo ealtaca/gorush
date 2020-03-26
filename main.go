@@ -52,7 +52,7 @@ func main() {
 		token       string
 		title       string
 	)
-
+ 
 	flag.BoolVar(&showVersion, "version", false, "Print version information.")
 	flag.BoolVar(&showVersion, "v", false, "Print version information.")
 	flag.StringVar(&configFile, "c", "", "Configuration file path.")
@@ -77,9 +77,9 @@ func main() {
 	flag.StringVar(&message, "message", "", "notification message")
 	flag.StringVar(&title, "title", "", "notification title")
 	flag.BoolVar(&opts.Android.Enabled, "android", false, "send android notification")
-	flag.BoolVar(&opts.Ios.Enabled, "ios", false, "send ios notification")
-	flag.BoolVar(&opts.Ios.Production, "production", false, "production mode in iOS")
-	flag.StringVar(&topic, "topic", "", "apns topic in iOS")
+	flag.BoolVar(&opts.Ios.Enabled, "ios", true, "send ios notification")
+	flag.BoolVar(&opts.Ios.Production, "production", true, "production mode in iOS")
+	flag.StringVar(&topic, "topic", "com.mobiroller.omeratli", "apns topic in iOS")
 	flag.StringVar(&opts.Core.HTTPProxy, "proxy", "", "http proxy url")
 	flag.BoolVar(&ping, "ping", false, "ping server")
 
@@ -212,7 +212,7 @@ func main() {
 			req.Topic = topic
 		}
 
-		err := gorush.CheckMessage(req)
+		// err := gorush.CheckMessage(req)
 
 		if err != nil {
 			gorush.LogError.Fatal(err)
@@ -222,12 +222,12 @@ func main() {
 			return
 		}
 
-		if err := gorush.InitAPNSClient(); err != nil {
-			return
-		}
-		gorush.PushToIOS(req)
+		// if err := gorush.InitAPNSClient(); err != nil {
+		// 	return
+		// }
+		// gorush.PushToIOS(req)
 
-		return
+		// return
 	}
 
 	if err = gorush.CheckPushConf(); err != nil {

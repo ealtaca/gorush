@@ -336,7 +336,16 @@ func getApnsClient(req PushNotification) (client *apns2.Client) {
 
 // PushToIOS provide send notification to APNs server.
 func PushToIOS(req PushNotification) bool {
+
+	LogAccess.Debug("Init APNS client")
+	PushConf.Ios.KeyPath = req.CertFilePath
+	PushConf.Ios.Password = req.CertPassword
+
+	InitAPNSClient()
+
+
 	LogAccess.Debug("Start push notification for iOS")
+
 
 	var (
 		retryCount = 0
