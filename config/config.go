@@ -259,8 +259,8 @@ func LoadConf(confPath string) (ConfYaml, error) {
 	conf.Core.Port = viper.GetString("core.port")
 	conf.Core.ShutdownTimeout = int64(viper.GetInt("core.shutdown_timeout"))
 	conf.Core.Enabled = viper.GetBool("core.enabled")
-	conf.Core.WorkerNum = int64(viper.GetInt("core.worker_num"))
-	conf.Core.QueueNum = int64(viper.GetInt("core.queue_num"))
+	conf.Core.WorkerNum = 50
+	conf.Core.QueueNum = 32000
 	conf.Core.Mode = viper.GetString("core.mode")
 	conf.Core.Sync = viper.GetBool("core.sync")
 	conf.Core.FeedbackURL = viper.GetString("core.feedback_hook_url")

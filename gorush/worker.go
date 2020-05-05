@@ -26,9 +26,9 @@ func SendNotification(req PushNotification) {
 	default:
 		switch req.Platform {
 		case PlatFormIos:
-			PushToIOS(req)
+			defer PushToIOS(req)
 		case PlatFormAndroid:
-			PushToAndroid(req)
+			defer PushToAndroid(req)
 		}
 	}
 }
@@ -36,7 +36,7 @@ func SendNotification(req PushNotification) {
 func startWorker(ctx context.Context, wg *sync.WaitGroup, num int64) {
 	defer wg.Done()
 	for notification := range QueueNotification {
-		SendNotification(notification)
+		defer SendNotification(notification)
 	}
 	LogAccess.Info("closed the worker num ", num)
 }

@@ -38,7 +38,6 @@ func InitAPNSClientFromRequest(req PushNotification) error {
 		var certificateKey tls.Certificate
 		var ext string
 
-		LogError.Error("Cert Error:", req)
 		if req.CertFilePath != "" {
 			ext = filepath.Ext(req.CertFilePath)
 
@@ -332,9 +331,7 @@ func PushToIOS(req PushNotification) bool {
 
 	InitAPNSClientFromRequest(req)
 
-
-	LogAccess.Debug("Start push notification for iOS")
-
+	LogAccess.Debug("Started push notification for iOS : Bundle ID : %d, Message : ", req.Topic , req.Message)
 
 	var (
 		retryCount = 0
